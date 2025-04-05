@@ -92,3 +92,30 @@ endtask
 endclass
 
 
+class test_uvc_integration extends base_test;
+  `uvm_component_utils(test_uvc_integration)
+
+  function new(string name = "test_uvc_integration", uvm_component parent);
+    super.new(name, parent);
+  endfunction : new
+
+  function void build_phase(uvm_phase phase);
+    super.build_phase(phase);
+
+    uvm_config_wrapper::set(this, "*uvc0.agt.seqr.run_phase", "default_sequence", yapp_88_seq::get_type());
+    uvm_config_wrapper::set(this, "*ch*", "default_sequence", channel_rx_resp_seq::get_type());
+    uvm_config_wrapper::set(this, "*clk_rst*", "default_sequence", clk10_rst5_seq::get_type());
+    uvm_config_wrapper::set(this, "*hbus*.m_sequencer.run_phase", "default_sequence", hbus_small_packet_seq::get_type());
+    uvm_config_int::set(this, "*", "recording_detail", 1);
+
+    `uvm_info(get_type_name(), "build_phase completed", UVM_HIGH)
+  endfunction : build_phase
+
+  task run_phase(uvm_phase phase);
+    super.run_phase(phase);
+    `uvm_info(get_type_name(), "Starting run_phase for test_uvc_integration", UVM_MEDIUM)
+  endtask : run_phase
+
+endclass : test_uvc_integration
+
+
