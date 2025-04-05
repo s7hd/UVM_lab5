@@ -124,3 +124,38 @@ class yapp_incr_payload_seq extends yapp_base_seq;
     `uvm_send(req)
   endtask
 endclass
+
+class yapp_88_seq extends yapp_base_seq;
+  uvm_object_utils(yapp_88_seq)
+
+  function new(string name = "yapp_88_seq");
+    super.new(name);
+  endfunction : new
+  
+task body();
+  int parity_error_count = 0;
+  for (int addr = 0; addr <= 3; addr++) begin
+    for (int len = 1; len <= 22; len++) begin
+      yapp_packet req;
+      uvm_create(req)
+
+      req.addr = addr;
+      req.length = len;
+      req.payload = new[len];
+      foreach (req.payload[i])
+        req.payload[i] = $urandom_range(0, 255);
+
+      if ((parity_error_count < 18) && ($urandom_range(0, 99) < 20)) begin
+        req.has_parity_error = 1;
+        parity_error_count++;
+      end else begin
+        req.has_parity_error = 0;
+      end
+
+      uvm_send(req)
+    end
+  end
+endtask
+
+endclass : yapp_88_seq
+    
